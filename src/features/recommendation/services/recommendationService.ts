@@ -27,16 +27,27 @@ export class RecommendationService {
     },
     settings?: {
       recommendationCount?: number;
+      recommendationCriteria?: {
+        minTmdbRating: number;
+        minVoteCount: number;
+      };
     },
     watchlistIds?: number[]
   ): Promise<Recommendation[]> {
     const recommendations: Recommendation[] = [];
     const allGenres = [...movieGenres, ...tvGenres];
 
+    // Ayarlardan kalite kriterlerini al (varsayılan değerlerle)
+    const qualityCriteria = {
+      minTmdbRating: settings?.recommendationCriteria?.minTmdbRating ?? 6.0,
+      minVoteCount: settings?.recommendationCriteria?.minVoteCount ?? 100
+    };
+
     // PUANLANAN İÇERİKLERİ FİLTRELE
     const ratedContentIds = new Set(existingRatings.map(r => r.movieId));
     const watchlistContentIds = new Set(watchlistIds || []);
     logger.info(`Filtering out rated content: ${ratedContentIds.size} items, watchlist: ${watchlistContentIds.size} items`);
+    logger.info(`Using quality criteria: minTmdbRating=${qualityCriteria.minTmdbRating}, minVoteCount=${qualityCriteria.minVoteCount}`);
 
     // Initialize filteredTMDbRecommendations outside try block
     let filteredTMDbRecommendations: Recommendation[] = [];
@@ -85,7 +96,7 @@ export class RecommendationService {
       // 3. Content-based filtering önerileri (Mevcut sistem)
       logger.info('Generating content-based recommendations...');
       await this.generateContentBasedRecommendations(
-        recommendations, profile, allGenres, ratedContentIds
+        recommendations, profile, allGenres, ratedContentIds, qualityCriteria
       );
 
       // 4. Tür-spesifik öneriler
@@ -165,12 +176,12 @@ export class RecommendationService {
         return year >= filters.minYear && year <= filters.maxYear;
       });
 
-      // Rating filter
+      // Rating filter (ayarlardan gelen kalite kriterleri kullanılıyor)
       filteredRecommendations = filteredRecommendations.filter(rec => {
         if (!rec?.movie || typeof rec.movie.vote_average !== 'number' || typeof rec.movie.vote_count !== 'number') return false;
-        return rec.movie.vote_average >= Math.max(6.0, filters.minRating) && 
+        return rec.movie.vote_average >= Math.max(qualityCriteria.minTmdbRating, filters.minRating) && 
                rec.movie.vote_average <= filters.maxRating &&
-               rec.movie.vote_count >= 100;
+               rec.movie.vote_count >= qualityCriteria.minVoteCount;
       });
 
       // Language filter
@@ -288,7 +299,8 @@ export class RecommendationService {
     recommendations: Recommendation[],
     profile: UserProfile,
     allGenres: Genre[],
-    ratedContentIds: Set<number>
+    ratedContentIds: Set<number>,
+    qualityCriteria?: { minTmdbRating: number; minVoteCount: number }
   ) {
     // Kullanıcının tür kombinasyonu tercihlerini analiz et
     const userGenreCombinationsObj = ContentBasedFiltering.analyzeUserGenreCombinations(profile);
@@ -303,13 +315,13 @@ export class RecommendationService {
     // Film önerileri
     await this.generateEnhancedMovieRecommendations(
       recommendations, profile, topGenres, userGenreCombinations, 
-      allGenres, ratedContentIds
+      allGenres, ratedContentIds, qualityCriteria
     );
     
     // Dizi önerileri
     await this.generateEnhancedTVRecommendations(
       recommendations, profile, topGenres, userGenreCombinations, 
-      allGenres, ratedContentIds
+      allGenres, ratedContentIds, qualityCriteria
     );
   }
 
@@ -725,19 +737,23 @@ export class RecommendationService {
     topGenres: string[], 
     userGenreCombinations: any[],
     allGenres: Genre[],
-    ratedContentIds: Set<number>
+    ratedContentIds: Set<number>,
+    qualityCriteria?: { minTmdbRating: number; minVoteCount: number }
   ) {
+    const minRating = qualityCriteria?.minTmdbRating ?? 6.0;
     const discoveryConfigs = [
       {
         with_genres: topGenres.slice(0, 3).join(','),
-        'vote_average.gte': Math.max(4.5, profile.averageScore - 2),
+        'vote_average.gte': Math.max(minRating, profile.averageScore - 2),
+        'vote_count.gte': qualityCriteria?.minVoteCount ?? 100,
         sort_by: 'vote_average.desc',
         page: Math.floor(Math.random() * 3) + 1,
         type: 'single_genre'
       },
       ...userGenreCombinations.slice(0, 4).filter(combo => combo.genres.length === 2).map(combo => ({
         with_genres: combo.genres.join(','),
-        'vote_average.gte': Math.max(4.0, profile.averageScore - 2.5),
+        'vote_average.gte': Math.max(minRating, profile.averageScore - 2.5),
+        'vote_count.gte': qualityCriteria?.minVoteCount ?? 100,
         sort_by: 'popularity.desc',
         page: Math.floor(Math.random() * 5) + 1,
         type: 'dual_combination',
@@ -745,7 +761,8 @@ export class RecommendationService {
       })),
       ...userGenreCombinations.slice(0, 3).filter(combo => combo.genres.length === 3).map(combo => ({
         with_genres: combo.genres.join(','),
-        'vote_average.gte': Math.max(5.5, profile.averageScore - 1.5),
+        'vote_average.gte': Math.max(minRating, profile.averageScore - 1.5),
+        'vote_count.gte': qualityCriteria?.minVoteCount ?? 100,
         sort_by: 'vote_average.desc',
         page: Math.floor(Math.random() * 3) + 1,
         type: 'triple_combination',
@@ -794,19 +811,23 @@ export class RecommendationService {
     topGenres: string[], 
     userGenreCombinations: any[],
     allGenres: Genre[],
-    ratedContentIds: Set<number>
+    ratedContentIds: Set<number>,
+    qualityCriteria?: { minTmdbRating: number; minVoteCount: number }
   ) {
+    const minRating = qualityCriteria?.minTmdbRating ?? 6.0;
     const discoveryConfigs = [
       {
         with_genres: topGenres.slice(0, 3).join(','),
-        'vote_average.gte': Math.max(4.0, profile.averageScore - 2.5),
+        'vote_average.gte': Math.max(minRating, profile.averageScore - 2.5),
+        'vote_count.gte': qualityCriteria?.minVoteCount ?? 100,
         sort_by: 'vote_average.desc',
         page: Math.floor(Math.random() * 5) + 1,
         type: 'single_genre'
       },
       ...userGenreCombinations.slice(0, 5).filter(combo => combo.genres.length === 2).map(combo => ({
         with_genres: combo.genres.join(','),
-        'vote_average.gte': Math.max(3.5, profile.averageScore - 3),
+        'vote_average.gte': Math.max(minRating, profile.averageScore - 3),
+        'vote_count.gte': qualityCriteria?.minVoteCount ?? 100,
         sort_by: 'popularity.desc',
         page: Math.floor(Math.random() * 8) + 1,
         type: 'dual_combination',
@@ -814,7 +835,8 @@ export class RecommendationService {
       })),
       ...topGenres.slice(0, 5).map(genreId => ({
         with_genres: genreId,
-        'vote_average.gte': Math.max(4.0, profile.averageScore - 2.5),
+        'vote_average.gte': Math.max(minRating, profile.averageScore - 2.5),
+        'vote_count.gte': qualityCriteria?.minVoteCount ?? 100,
         sort_by: Math.random() > 0.5 ? 'vote_average.desc' : 'popularity.desc',
         page: Math.floor(Math.random() * 6) + 1,
         type: 'pure_genre'

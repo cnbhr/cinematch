@@ -930,7 +930,10 @@ export const useMovieData = (settings?: AppSettings) => {
             tvGenres,
             newRatings,
             { ...recommendationFilters, showKidsContent: settings?.showKidsContent ?? false, showAnimationContent: settings?.showAnimationContent ?? true, showAnimeContent: settings?.showAnimeContent ?? true },
-            settings?.recommendationCount !== undefined ? { recommendationCount: settings.recommendationCount } : {},
+            { 
+              recommendationCount: settings?.recommendationCount,
+              recommendationCriteria: settings?.recommendationCriteria
+            },
             watchlistIds
           );
           safeSetState(setRecommendationsLocal, recs, []);
@@ -1097,7 +1100,10 @@ export const useMovieData = (settings?: AppSettings) => {
         tvGenres,
         ratings,
         recommendationFilters, // Filtreleri geçir
-        settings?.recommendationCount !== undefined ? { recommendationCount: settings.recommendationCount } : {} // Ayarları geçir
+        { 
+          recommendationCount: settings?.recommendationCount,
+          recommendationCriteria: settings?.recommendationCriteria
+        } // Ayarları geçir
       );
       
       // Filtrelenmiş önerileri doğrudan set et

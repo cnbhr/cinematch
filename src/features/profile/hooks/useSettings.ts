@@ -21,6 +21,10 @@ const defaultSettings: AppSettings = {
     qualityWeight: 80,
     recencyWeight: 20
   },
+  recommendationCriteria: {
+    minTmdbRating: 6.0,
+    minVoteCount: 100
+  },
   defaultFilters: {
     minYear: 1950,
     maxYear: new Date().getFullYear(),

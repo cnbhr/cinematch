@@ -39,6 +39,12 @@ export interface AppSettings {
     recencyWeight: number;        // Güncellik faktörü (0-100)
   };
   
+  // Filtre Kriterleri
+  recommendationCriteria: {
+    minTmdbRating: number;        // Minimum TMDB puanı (0-10)
+    minVoteCount: number;         // Minimum oy sayısı
+  };
+  
   // Filtre Ayarları
   defaultFilters: {
     minYear: number;
@@ -89,6 +95,10 @@ const defaultSettings: AppSettings = {
     diversityWeight: 10,
     qualityWeight: 80,
     recencyWeight: 20
+  },
+  recommendationCriteria: {
+    minTmdbRating: 6.0,
+    minVoteCount: 100
   },
   defaultFilters: {
     minYear: 1950,
@@ -569,6 +579,88 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                         className="px-3 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg text-sm transition-colors"
                       >
                         Maceracı
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recommendation Quality Criteria */}
+                <div className="bg-slate-700/50 rounded-lg p-4 space-y-6">
+                  <h4 className="font-medium text-white">Kalite Kriterleri</h4>
+                  <p className="text-xs text-slate-400 mb-4">
+                    Bu ayarlar hangi içeriklerin önerilere dahil edileceğini belirler. Düşük değerler daha fazla, yüksek değerler daha az ama kaliteli öneriler sunar.
+                  </p>
+                  
+                  <div>
+                    <label className="block text-sm text-slate-300 mb-2">
+                      Minimum TMDB Puanı: {localSettings.recommendationCriteria.minTmdbRating.toFixed(1)}
+                    </label>
+                    <p className="text-xs text-slate-400 mb-2">Önerilen içeriklerin minimum TMDB puanı (0-10)</p>
+                    <input
+                      type="range"
+                      min="0"
+                      max="9"
+                      step="0.5"
+                      value={localSettings.recommendationCriteria.minTmdbRating}
+                      onChange={(e) => updateNestedSetting('recommendationCriteria', 'minTmdbRating', parseFloat(e.target.value))}
+                      className="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                    <div className="flex justify-between text-xs text-slate-400 mt-1">
+                      <span>0.0 (Her şey)</span>
+                      <span>9.0 (Sadece en iyiler)</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm text-slate-300 mb-2">
+                      Minimum Oy Sayısı: {localSettings.recommendationCriteria.minVoteCount}
+                    </label>
+                    <p className="text-xs text-slate-400 mb-2">Önerilen içeriklerin minimum TMDB oy sayısı</p>
+                    <input
+                      type="range"
+                      min="10"
+                      max="1000"
+                      step="10"
+                      value={localSettings.recommendationCriteria.minVoteCount}
+                      onChange={(e) => updateNestedSetting('recommendationCriteria', 'minVoteCount', parseInt(e.target.value))}
+                      className="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                    <div className="flex justify-between text-xs text-slate-400 mt-1">
+                      <span>10 (Bilinmez dahil)</span>
+                      <span>1000 (Çok izlenen)</span>
+                    </div>
+                  </div>
+
+                  {/* Quality Preset Buttons */}
+                  <div className="border-t border-slate-600 pt-4">
+                    <p className="text-sm text-slate-300 mb-3">Kalite Hazır Ayarları:</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        onClick={() => updateSetting('recommendationCriteria', {
+                          minTmdbRating: 4.0,
+                          minVoteCount: 50
+                        })}
+                        className="px-3 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg text-sm transition-colors"
+                      >
+                        Geniş Yelpaze
+                      </button>
+                      <button
+                        onClick={() => updateSetting('recommendationCriteria', {
+                          minTmdbRating: 6.0,
+                          minVoteCount: 100
+                        })}
+                        className="px-3 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg text-sm transition-colors"
+                      >
+                        Dengeli (Önerilen)
+                      </button>
+                      <button
+                        onClick={() => updateSetting('recommendationCriteria', {
+                          minTmdbRating: 7.5,
+                          minVoteCount: 500
+                        })}
+                        className="px-3 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg text-sm transition-colors"
+                      >
+                        Sadece İyiler
                       </button>
                     </div>
                   </div>
