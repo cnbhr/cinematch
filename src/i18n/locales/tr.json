@@ -1,0 +1,45 @@
+{
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "close": "Kapat",
+    "back": "Geri",
+    "next": "İleri",
+    "previous": "Önceki",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "sort": "Sırala",
+    "refresh": "Yenile"
+  },
+  "navigation": {
+    "home": "Ana Sayfa",
+    "movies": "Filmler",
+    "tv": "Diziler",
+    "watchlist": "İzleme Listesi",
+    "profile": "Profil",
+    "settings": "Ayarlar"
+  },
+  "movies": {
+    "title": "Filmler",
+    "rate": "Puanla",
+    "addToWatchlist": "Listeye Ekle",
+    "removeFromWatchlist": "Listeden Çıkar",
+    "viewDetails": "Detayları Gör",
+    "genres": "Türler",
+    "releaseDate": "Çıkış Tarihi",
+    "runtime": "Süre",
+    "rating": "Puan"
+  },
+  "recommendation": {
+    "title": "Öneriler",
+    "personalized": "Senin İçin Öneriler",
+    "trending": "Trendler",
+    "popular": "Popüler",
+    "topRated": "En İyi Puanlananlar"
+  }
+}

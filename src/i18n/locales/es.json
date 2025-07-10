@@ -1,0 +1,45 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "refresh": "Actualizar"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "movies": "Películas",
+    "tv": "Series",
+    "watchlist": "Lista de Seguimiento",
+    "profile": "Perfil",
+    "settings": "Configuración"
+  },
+  "movies": {
+    "title": "Películas",
+    "rate": "Calificar",
+    "addToWatchlist": "Añadir a Lista",
+    "removeFromWatchlist": "Quitar de Lista",
+    "viewDetails": "Ver Detalles",
+    "genres": "Géneros",
+    "releaseDate": "Fecha de Estreno",
+    "runtime": "Duración",
+    "rating": "Calificación"
+  },
+  "recommendation": {
+    "title": "Recomendaciones",
+    "personalized": "Personalizado para Ti",
+    "trending": "Tendencias",
+    "popular": "Popular",
+    "topRated": "Mejor Valoradas"
+  }
+}

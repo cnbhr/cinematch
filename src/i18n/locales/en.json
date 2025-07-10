@@ -1,0 +1,45 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "refresh": "Refresh"
+  },
+  "navigation": {
+    "home": "Home",
+    "movies": "Movies",
+    "tv": "TV Shows",
+    "watchlist": "Watchlist",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "movies": {
+    "title": "Movies",
+    "rate": "Rate",
+    "addToWatchlist": "Add to Watchlist",
+    "removeFromWatchlist": "Remove from Watchlist",
+    "viewDetails": "View Details",
+    "genres": "Genres",
+    "releaseDate": "Release Date",
+    "runtime": "Runtime",
+    "rating": "Rating"
+  },
+  "recommendation": {
+    "title": "Recommendations",
+    "personalized": "Personalized for You",
+    "trending": "Trending Now",
+    "popular": "Popular",
+    "topRated": "Top Rated"
+  }
+}
